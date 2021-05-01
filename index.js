@@ -18,8 +18,15 @@ const TOKEN = process.env.DISCORD_TOKEN;
 
 bot.login(TOKEN);
 
+// objects
+const Game = require("./objects/game.js").Game;
+
 // constants that are useful
-const quizMode = 88
+const QUIZCREATE = 88
+const ENTERQUIZSET = 87
+
+// data
+var data = {games: {}}
 
 bot.on('ready', () => {
   console.info(`Logged in as ${bot.user.tag}!`);
@@ -31,14 +38,46 @@ bot.on('message', msg => {
   const args = msg.content.split(/ +/);
   const command = args.shift().toLowerCase(); // removes first word and makes that command
 
+  if(msg.channel.id in data.games) {
+    var game = data.games[msg.channel.id];
+    if(game.quiz === -1) { // select a quiz
+      if (isNaN(command)) {
+        msg.channel.send("Quiz set must be a number!");
+      } else if (parseInt(command) < 1 || parseInt(command) > 5) {
+        msg.channel.send("Quiz set must be between 1 and 5!");
+      } else {
+        msg.channel.send(
+`Quiz set ${command} chosen!
+All players who want to play, type $join`);
+        game.quiz = parseInt(command);
+      }
+      console.log(game);
+    } else if (game.started === false) {
+      
+    }
+  }
+
   if (!bot.commands.has(command)) return; // no command then bye
   console.info(`Called command: ${command}`);
 
   try {
     var cbid = bot.commands.get(command).execute(msg, args);
-    
+    if(msg.channel.id in data.games) { // game exists for this channel
+      var game = data.games[msg.channel.id];
+      console.log(game);
+    } else {
+      switch(cbid) {
+        case QUIZCREATE:
+          data.games[msg.channel.id] = new Game([],-1);
+          console.log(data.games[msg.channel.id]);
+          break;
+        default:
+          msg.reply('Cannot use that command right now!');
+          break;
+      }
+    }
   } catch (error) {
     console.error(error);
-    msg.reply('there was an error trying to execute that command!');
+    msg.reply('Error trying to execute command!');
   }
 });
