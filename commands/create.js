@@ -1,10 +1,13 @@
+const Game = require("../objects/game.js").Game;
+
 module.exports = {
 	name: "$creategame",
 	description: "Creates a kahoot game",
-	execute(msg, args) {
+	execute(msg, args, data) {
 		msg.channel.send(
 `Creating Quiz...
 Enter which quiz set (1 - 5):`);
-		return 88;
+        data.games[msg.channel.id] = new Game([],-1);
+        console.log(data.games[msg.channel.id]);
 	},
 };

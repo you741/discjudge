@@ -48,12 +48,12 @@ bot.on('message', msg => {
       } else {
         msg.channel.send(
 `Quiz set ${command} chosen!
-All players who want to play, type $join`);
+All players who want to play, type $join.
+The game creator can type $start to start.`);
         game.quiz = parseInt(command);
       }
       console.log(game);
-    } else if (game.started === false) {
-      
+      return;
     }
   }
 
@@ -61,21 +61,7 @@ All players who want to play, type $join`);
   console.info(`Called command: ${command}`);
 
   try {
-    var cbid = bot.commands.get(command).execute(msg, args);
-    if(msg.channel.id in data.games) { // game exists for this channel
-      var game = data.games[msg.channel.id];
-      console.log(game);
-    } else {
-      switch(cbid) {
-        case QUIZCREATE:
-          data.games[msg.channel.id] = new Game([],-1);
-          console.log(data.games[msg.channel.id]);
-          break;
-        default:
-          msg.reply('Cannot use that command right now!');
-          break;
-      }
-    }
+    var cbid = bot.commands.get(command).execute(msg, args, data);
   } catch (error) {
     console.error(error);
     msg.reply('Error trying to execute command!');
