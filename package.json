@@ -1,0 +1,23 @@
+{
+  "name": "kahootbot",
+  "version": "1.0.0",
+  "description": "Bot that lets users do tests on discord",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/you741/kahootbot.git"
+  },
+  "author": "You Zhou",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/you741/kahootbot/issues"
+  },
+  "homepage": "https://github.com/you741/kahootbot#readme",
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "dotenv": "^8.2.0"
+  }
+}
