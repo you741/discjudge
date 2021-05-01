@@ -1,3 +1,9 @@
+//
+// Created by You Zhou on 30/04/2021
+//
+// base code is from a template from https://www.sitepoint.com/discord-bot-node-js/
+// idea is not copied, just the structure of the commands
+
 require('dotenv').config();
 const Discord = require('discord.js');
 const bot = new Discord.Client();
@@ -30,6 +36,7 @@ bot.on('message', msg => {
 
   try {
     var cbid = bot.commands.get(command).execute(msg, args);
+    
   } catch (error) {
     console.error(error);
     msg.reply('there was an error trying to execute that command!');
