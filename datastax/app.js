@@ -1,5 +1,6 @@
 require("dotenv").config()
 const { createClient } = require("@astrajs/rest");
+const axios = require('axios');
 
 // create an Astra client
 
@@ -22,9 +23,41 @@ const { createClient } = require("@astrajs/rest");
     );*/
 
     // search a collection of documents
-    const response = await astraClient.get(path);
+    const options = {
+        method: 'GET',
+        url: `https://${process.env.ASTRA_DB_ID}-${process.env.ASTRA_DB_REGION}.apps.astra.datastax.com/api/rest/v2/keyspaces/${process.env.ASTRA_DB_KEYSPACE}/test_data5`,
+        headers: {
+            'X-Cassandra-Token': `${process.env.ASTRA_DB_APPLICATION_TOKEN}`
+        },
+        params: {
+            where: {
+            },
+        },
+        validateStatus: false,
+    }
 
-    console.log(response)
+    const postOptions = {
+        method: 'POST',
+        url: `https://${process.env.ASTRA_DB_ID}-${process.env.ASTRA_DB_REGION}.apps.astra.datastax.com/api/rest/v2/schemas/keyspaces/${process.env.ASTRA_DB_KEYSPACE}/tables`,
+        headers: {
+            'X-Cassandra-Token': `${process.env.ASTRA_DB_APPLICATION_TOKEN}`
+        },
+        data: {
+            name: "test_data5",
+            columnDefinitions: [{
+                name: "p_id",
+                typeDefinition: "text"
+            }],
+            primaryKey: {
+                partitionKey: ["p_id"]
+            }
+        },
+        validateStatus: false,
+    }
+
+    const response = await axios.request(options);
+
+    console.log(response.data)
 })()
 
 /*
