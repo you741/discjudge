@@ -1,0 +1,4 @@
+id,q_stmt,is_mc,c_1,c_2,c_3,c_4,c_5,ans
+1,What is 1+1?,n,n/a,n/a,n/a,n/a,n/a,2
+2,What is 2+2?,y,1,2,3,4,5,4
+3,What is 3+3?,y,1,2,3,4,6,6
