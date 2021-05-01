@@ -1,0 +1,1 @@
+/Users/tianhaoyao/Desktop/dsbulk-1.8.0/bin/dsbulk load --connector.csv.url /Users/tianhaoyao/Desktop/kahootbot/datastax/csv_data/test_data5.csv --schema.keyspace tyao_db_ks --schema.table test_data5 --driver.basic.cloud.secure-connect-bundle /Users/tianhaoyao/Desktop/secure-connect-tyao-db.zip -u t.yao@uwaterloo.ca -p Ya-64739848#
