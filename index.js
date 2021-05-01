@@ -26,7 +26,7 @@ const QUIZCREATE = 88
 const ENTERQUIZSET = 87
 
 // data
-var data = {games: {}}
+var data = {games: {}, players: {}};
 
 bot.on('ready', () => {
   console.info(`Logged in as ${bot.user.tag}!`);
@@ -37,6 +37,12 @@ bot.on('message', msg => {
 
   const args = msg.content.split(/ +/);
   const command = args.shift().toLowerCase(); // removes first word and makes that command
+
+  if(msg.channel instanceof Discord.DMChannel) {
+    // TODO: check if player messaging is in a game
+    msg.reply("Hey there, to use this Bot, type \"$creategame\" in a server text channel!");
+    return;
+  }
 
   if(msg.channel.id in data.games) {
     var game = data.games[msg.channel.id];

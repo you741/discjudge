@@ -15,6 +15,8 @@ module.exports = {
         		msg.reply("You've been added to the game!");
         		console.log(data.games[msg.channel.id]);
         	}
+        } else {
+        	msg.reply("There is no game to join!");
         }
 	},
 };
