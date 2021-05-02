@@ -4,7 +4,8 @@ module.exports = {
   	this.quiz = quiz;
   	this.creator = creator;
   	this.started = false;
-  	this.scoreboard = {};
+  	this.scoreboard = new Map();
   	this.timeStarted = -1;
+  	this.numQuestions = -1;
   },
 };

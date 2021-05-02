@@ -21,44 +21,8 @@ bot.login(TOKEN);
 // objects
 const Game = require("./objects/game.js").Game;
 
-// constants that are useful
-const QUIZCREATE = 88
-const ENTERQUIZSET = 87
-
 // data
 var data = {games: {}, players: {}};
-var questionNum = 1;
-
-// functions
-function sendQuestion(num,msg,game) {
-  msg.channel.send(`Question #${num} sent to players!`);
-  for(var key in game.players) {
-    var player = game.players[key];
-    player.send(`Question ${num}:`)
-    .then(async message => {
-      try {
-        await message.react('🇦');
-        await message.react('🇧');
-        await message.react('🇨');
-        await message.react('🇩');
-      } catch(error) {
-        console.error('Could not react with one of the emojis');
-      }
-      const filter = (reaction,user) => {
-        return ["🇦","🇧","🇨","🇩"].includes(reaction.emoji.name) && !user.bot;
-      };
-      message.awaitReactions(filter, {max: 1, time: 60000, errors: ['time']})
-      .then(collected => {
-        var reaction = collected.first();
-        message.channel.send(`You answered ${reaction.emoji.name}.`);
-        // TODO: check for right answer  
-      })
-      .catch(collected => {
-        message.channel.send("You reacted with an invalid answer... no points.");
-      });
-    });
-  }
-}
 
 bot.on('ready', () => {
   console.info(`Logged in as ${bot.user.tag}!`);
@@ -91,8 +55,8 @@ bot.on('message', msg => {
 All players who want to play, type $join.
 The game creator can type $start to start.`);
           game.quiz = parseInt(command);
+          game.numQuestions = 8; // TODO: change this to real num questions
         }
-        console.log(game);
       }
     }
     return;
@@ -102,13 +66,6 @@ The game creator can type $start to start.`);
 
   try {
     bot.commands.get(command).execute(msg, args, data);
-    if(command === "$start") {
-      if(msg.channel.id in data.games) {
-        var game = data.games[msg.channel.id];
-        sendQuestion(questionNum,msg,game);
-        // TODO: resend question and update scoreboard after time limit
-      }
-    }
   } catch (error) {
     console.error(error);
     msg.reply('Error trying to execute command!');
