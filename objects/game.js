@@ -7,5 +7,6 @@ module.exports = {
   	this.scoreboard = new Map();
   	this.timeStarted = -1;
   	this.numQuestions = -1;
+  	this.quizData = {};
   },
 };
