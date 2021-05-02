@@ -1,7 +1,17 @@
 require("dotenv").config()
+const file_p = require("./file_p.js")
+const b64toBlob = require('b64-to-blob');
 const { createClient } = require("@astrajs/rest");
 const axios = require('axios');
 
+const express = require("express");
+const bodyParser = require("body-parser");
+const app = express();
+app.use(bodyParser.urlencoded({
+  limit: '50mb',
+  parameterLimit: 100000,
+  extended: true
+}));
 // create an Astra client
 
 (async() => {
@@ -25,7 +35,7 @@ const axios = require('axios');
     // search a collection of documents
     const options = {
         method: 'GET',
-        url: `https://${process.env.ASTRA_DB_ID}-${process.env.ASTRA_DB_REGION}.apps.astra.datastax.com/api/rest/v2/keyspaces/${process.env.ASTRA_DB_KEYSPACE}/test_data5`,
+        url: `https://${process.env.ASTRA_DB_ID}-${process.env.ASTRA_DB_REGION}.apps.astra.datastax.com/api/rest/v2/keyspaces/${process.env.ASTRA_DB_KEYSPACE}/test_media5`,
         headers: {
             'X-Cassandra-Token': `${process.env.ASTRA_DB_APPLICATION_TOKEN}`
         },
@@ -36,28 +46,62 @@ const axios = require('axios');
         validateStatus: false,
     }
 
-    const postOptions = {
+    const tableCreationOptions = {
         method: 'POST',
         url: `https://${process.env.ASTRA_DB_ID}-${process.env.ASTRA_DB_REGION}.apps.astra.datastax.com/api/rest/v2/schemas/keyspaces/${process.env.ASTRA_DB_KEYSPACE}/tables`,
         headers: {
             'X-Cassandra-Token': `${process.env.ASTRA_DB_APPLICATION_TOKEN}`
         },
         data: {
-            name: "test_data5",
+            name: "test_media5",
             columnDefinitions: [{
-                name: "p_id",
+                name: "code",
+                typeDefinition: "blob"
+            }, {
+                name: "file_type",
                 typeDefinition: "text"
             }],
             primaryKey: {
-                partitionKey: ["p_id"]
+                partitionKey: ["code"]
             }
         },
         validateStatus: false,
     }
 
-    const response = await axios.request(options);
+    let fileList = ['test3.jpg']
+    let [hexList, fileTypeList] = await file_p.readMediaFiles(fileList);
 
-    console.log(response.data)
+    /*let contentType = 'image/png';
+    let b64Data =
+    'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACN' +
+    'byblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHx' +
+    'gljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='; */
+
+    global.atob = require("atob");
+    global.Blob = require('node-blob');
+
+    //let blob = b64toBlob(b64Data, contentType);
+    //const fetch = require("node-fetch");
+    //const base64Response = await fetch(`data:image/png;base64,${b64Data}`);
+    //const blob = await base64Response.blob();
+    //console.log(blob.toString())
+
+    const uploadOptions = {
+        method: 'POST',
+        url: `https://${process.env.ASTRA_DB_ID}-${process.env.ASTRA_DB_REGION}.apps.astra.datastax.com/api/rest/v2/keyspaces/${process.env.ASTRA_DB_KEYSPACE}/test_media5`,
+        headers: {
+            'X-Cassandra-Token': `${process.env.ASTRA_DB_APPLICATION_TOKEN}`
+        },
+        data: {
+            "code": hexList[0],
+            "file_type": fileTypeList[0]
+        },
+        validateStatus: false
+    }
+
+    const response = await axios.request(options);
+    file_p.getBufferFromStrHex([response.data.data[0].code],[response.data.data[0].file_type])
+    //console.log(response.data)
 })()
 
 /*
