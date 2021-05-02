@@ -15,10 +15,14 @@ function calcScore(timeDiff) {
 }
 
 function sortScoreboard(scoreboard) {
-	var sorted = Object.keys(scoreboard).sort((k1,k2) => {
-		return scoreboard.get(k2).score - scoreboard.get(k1).score;
+	var obj = {};
+	scoreboard.forEach((u,k) => {
+		obj[k] = u;
+	});
+	var sorted = Object.keys(obj).sort((k1,k2) => {
+		return obj[k2].score - obj[k1].score;
 	}).map(k => {
-		return scoreboard.get(k).player;
+		return {player: obj[k].player, score: obj[k].score};
 	});
 	return sorted;
 }
@@ -68,14 +72,23 @@ function sendQuestion(num,msg,game) {
   }
 }
 
-async function gameLoop(num,msg,game) { // start of every new round
+async function gameLoop(num,msg,data) { // start of every new round
+  if(!(msg.channel.id in data.games)) return;
+  var game = data.games[msg.channel.id];
   game.timeStarted = new Date();
   sendQuestion(num,msg,game);
   setTimeout(() => { // show results after time limit
     console.log(`Question ${num} results:`);
     console.log(game.scoreboard);
     msg.channel.send(`Question ${num} results:`);
-    console.log(sortScoreboard(game.scoreboard));
+    var sorted = sortScoreboard(game.scoreboard);
+    for(var i = 0;i < sorted.length;i++) {
+    	msg.channel.send(`${i+1}. ${sorted[i].player.username}: ${sorted[i].score} points.`);
+    }
+    if(num === game.numQuestions) {
+    	msg.channel.send(`Winner is: <@${sorted[0].player.id}>!`);
+    	delete data.games[msg.channel.id];
+    }
 	if(num < game.numQuestions) {
 	    msg.channel.send(`React with ✅ to continue.`).then(message => {
 	    	message.react('✅');
@@ -83,7 +96,7 @@ async function gameLoop(num,msg,game) { // start of every new round
 	    		return reaction.emoji.name === '✅' && user === game.creator;
 	    	};
 	    	message.awaitReactions(filter, {max: 1}).then(collected => {
-			      gameLoop(num+1,msg,game);
+			      gameLoop(num+1,msg,data);
 	    	});
 	    });
 	}
@@ -111,7 +124,7 @@ module.exports = {
 				}
 				msg.channel.send("Starting game...");
 				data.games[msg.channel.id].started = true;
-        		gameLoop(questionNum,msg,game);
+        		gameLoop(questionNum,msg,data);
 			} else {
 				msg.reply("You are not the game creator so you cannot start the game.");
 			}

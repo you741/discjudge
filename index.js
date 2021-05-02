@@ -55,7 +55,7 @@ bot.on('message', msg => {
 All players who want to play, type $join.
 The game creator can type $start to start.`);
           game.quiz = parseInt(command);
-          game.numQuestions = 8; // TODO: change this to real num questions
+          game.numQuestions = 3; // TODO: change this to real num questions
         }
       }
     }
