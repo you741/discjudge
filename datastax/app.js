@@ -35,7 +35,7 @@ app.use(bodyParser.urlencoded({
     // search a collection of documents
     const options = {
         method: 'GET',
-        url: `https://${process.env.ASTRA_DB_ID}-${process.env.ASTRA_DB_REGION}.apps.astra.datastax.com/api/rest/v2/keyspaces/${process.env.ASTRA_DB_KEYSPACE}/test_media5`,
+        url: `https://${process.env.ASTRA_DB_ID}-${process.env.ASTRA_DB_REGION}.apps.astra.datastax.com/api/rest/v2/keyspaces/${process.env.ASTRA_DB_KEYSPACE}/test_data_o`,
         headers: {
             'X-Cassandra-Token': `${process.env.ASTRA_DB_APPLICATION_TOKEN}`
         },
@@ -68,40 +68,36 @@ app.use(bodyParser.urlencoded({
         validateStatus: false,
     }
 
-    let fileList = ['test3.jpg']
+    let fileList = ['husky.mov']
     let [hexList, fileTypeList] = await file_p.readMediaFiles(fileList);
-
-    /*let contentType = 'image/png';
-    let b64Data =
-    'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACN' +
-    'byblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHx' +
-    'gljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='; */
-
-    global.atob = require("atob");
-    global.Blob = require('node-blob');
-
-    //let blob = b64toBlob(b64Data, contentType);
-    //const fetch = require("node-fetch");
-    //const base64Response = await fetch(`data:image/png;base64,${b64Data}`);
-    //const blob = await base64Response.blob();
-    //console.log(blob.toString())
+    //console.log(hexList[0])
 
     const uploadOptions = {
         method: 'POST',
-        url: `https://${process.env.ASTRA_DB_ID}-${process.env.ASTRA_DB_REGION}.apps.astra.datastax.com/api/rest/v2/keyspaces/${process.env.ASTRA_DB_KEYSPACE}/test_media5`,
+        url: `https://${process.env.ASTRA_DB_ID}-${process.env.ASTRA_DB_REGION}.apps.astra.datastax.com/api/rest/v2/keyspaces/${process.env.ASTRA_DB_KEYSPACE}/test_data_o`,
         headers: {
             'X-Cassandra-Token': `${process.env.ASTRA_DB_APPLICATION_TOKEN}`
         },
         data: {
-            "code": hexList[0],
-            "file_type": fileTypeList[0]
+            "id": 4,
+            "q_stmt": "What's the name of the dog in the video?",
+            "is_mc": "y",
+            "c_1": "Golden Retriever",
+            "c_2": "Husky",
+            "c_3": "Labrador",
+            "c_4": "Border Collie",
+            "ans": "B",
+            "media_data": hexList[0],
+            "media_type": fileTypeList[0]
         },
         validateStatus: false
     }
 
     const response = await axios.request(options);
-    file_p.getBufferFromStrHex([response.data.data[0].code],[response.data.data[0].file_type])
-    //console.log(response.data)
+    console.log(response.data)
+
+    //file_p.getBufferFromStrHex([response.data.data[0].code],[response.data.data[0].file_type])
+    console.log(response.data)
 })()
 
 /*

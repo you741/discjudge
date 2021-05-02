@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <p id="demo">Click me.</p>
+        <script>
+            document.getElementById("demo").onclick = function() {myFunction()};
+
+            async function myFunction()
+            {
+                require('dcp-client').initSync();
+
+                const Worker = require('dcp/worker');
+                const wallet = require('dcp/wallet');
+
+                document.getElementById("demo").innerHTML = "YOU CLICKED ME!";
+
+                var idks = await wallet.load(IdKsFilename);
+                var accks = await wallet.load(AccKsFilename);
+
+                console.log(idks);
+                console.log(accks);
+
+                var worker = new Worker({
+                paymentAddress: accks.address,
+                identityKeystore: idks,
+                localExec: true});
+
+                console.log(getMethods(worker));
+
+                var res = await worker.start();
+
+                console.log(res);
+            }
+        </script>
+    </body>
+</html>
