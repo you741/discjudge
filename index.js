@@ -81,17 +81,16 @@ function sendQuestion(num,msg) {
     media = {files:["./media/test.cpp"]};
   }
   // set question
-  var q_stmt = `Question ${num}: ${quizData.q_stmt}
+  var q_stmt = `\`\`\`Question ${num}: ${quizData.q_stmt}
 A: ${quizData.c_1}
 B: ${quizData.c_2}
 C: ${quizData.c_3}
-D: ${quizData.c_4}
-(MAKE SURE YOU WAIT FOR ALL ANSWERS TO APPEAR BEFORE ANSWERING, IF THE BOT DOES NOT RESPOND TO YOUR REACTION, REACT AGAIN)`;
+D: ${quizData.c_4}\`\`\``;
   if(quizData.is_mc === 'n') {
-    q_stmt = `Question ${num}: ${quizData.q_stmt}
-(MAKE SURE YOU WAIT FOR ALL ANSWERS TO APPEAR BEFORE ANSWERING, IF THE BOT DOES NOT RESPOND TO YOUR REACTION, REACT AGAIN)`
+    q_stmt = `\`\`\`Question ${num}: ${quizData.q_stmt}\`\`\``
   }
-  msg.channel.send(`Question #${num} sent to players: ${quizData.q_stmt}`,media);
+  msg.channel.send(`Question #${num} sent to players:`);
+  msg.channel.send(q_stmt,media);
   for(var key in game.players) {
     var player = game.players[key];
     if(!game.scoreboard.has(player.id)) game.scoreboard.set(player.id, new Score(player, game));
