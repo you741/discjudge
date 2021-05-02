@@ -4,5 +4,7 @@ module.exports = {
   	this.quiz = quiz;
   	this.creator = creator;
   	this.started = false;
+  	this.scoreboard = {};
+  	this.timeStarted = -1;
   },
 };

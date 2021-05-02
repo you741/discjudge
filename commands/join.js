@@ -10,6 +10,8 @@ module.exports = {
         		msg.reply("You're already in the game!");
         	} else if (game.started === true) {
         		msg.reply(`Sorry, the game has started!`);
+        	} else if (game.quiz === -1) {
+        		msg.reply("Can't join until valid quiz is selected!");
         	} else {
         		data.games[msg.channel.id].players.push(msg.author);
         		msg.reply("You've been added to the game!");
