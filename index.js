@@ -179,8 +179,26 @@ bot.on('message', async msg => {
   const command = args.shift().toLowerCase(); // removes first word and makes that command
 
   if(msg.channel instanceof Discord.DMChannel) {
-    // TODO: check if player messaging is in a game
-    msg.reply("Hey there, to use this Bot, type \"$creategame\" in a server text channel!");
+    var author = msg.author;
+    if(author.id in data.players) {
+      var game = data.players[author.id].game;
+      var quizData = game.quizData[questionNum-1];
+      if(quizData.is_mc === 'n') {
+        var timeAnswered = new Date();
+        if(quizData.ans === msg.content) {
+            var timeDiff = (timeAnswered.getTime() - game.timeStarted.getTime())/TIMELIMIT*500;
+            var scoreBoost = calcScore(timeDiff);
+            game.scoreboard.get(author.id).score += scoreBoost;
+            msg.channel.send(`Your answer is correct! Gained ${scoreBoost} points! Score: ${game.scoreboard.get(author.id).score}`);
+          } else {
+            msg.channel.send(`Your answer is incorrect! Score: ${game.scoreboard.get(author.id).score}`);
+          }
+      } else {
+        msg.channel.send("This is a multiple choice question!");
+      }
+    }  else {
+      msg.reply("Hey there, to use this Bot, type \"$creategame\" in a server text channel!");
+    }
     return;
   }
 
@@ -217,7 +235,7 @@ The game creator can type $start to start.`);
         var game = data.games[msg.channel.id];
         if(game.started) {
           for(var key in game.players) {
-            data.players[game.players[key].id] = game.players[key];
+            data.players[game.players[key].id] = {player: game.players[key], game: game};
           }
           console.log(data.players);
           gameLoop(1,msg);
